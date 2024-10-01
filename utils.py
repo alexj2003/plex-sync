@@ -1,3 +1,4 @@
+import json
 import numpy as np
 import pandas as pd
 from os import path
@@ -41,3 +42,9 @@ def merge_dfs(ratings: pd.DataFrame, watched: pd.DataFrame, watchlist: pd.DataFr
 
     merged_df = merged_df[['Name', 'Year', 'Watched', 'Watchlist', 'Rating']]
     return merged_df
+
+def read_config(file_path: str) -> dict:
+    with open(file_path) as f:
+        config = json.load(f)
+
+    return config
