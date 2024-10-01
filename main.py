@@ -1,29 +1,25 @@
 import pandas as pd
 from os import path
 from plex_sync import sync_movies
+from constants import *
 from utils import *
 
 def main():
     # Read CSV files
-    if path.isfile('ratings.csv'):
-        ratings = read_csv('ratings.csv')
-    else:
-        print("ratings.csv not found")
-        ratings = pd.DataFrame(columns=['Letterboxd URI', 'Name', 'Year'])
+    dataframes = []
+    for name in VALID_NAMES:
+        file_path = path.join(DATA_PATH, f"{name}.csv")
+        if path.isfile(file_path):
+            df = read_csv(file_path)
+            print(f"Read {name}.csv")
+        else:
+            # Not found, create empty dataframe
+            df = pd.DataFrame(columns=['Letterboxd URI', 'Name', 'Year'])
+            print(f"{name}.csv not found")
+        dataframes.append(df)
 
-    if path.isfile('watched.csv'):
-        watched = read_csv('watched.csv')
-    else:
-        print("watched.csv not found")
-        watched = pd.DataFrame(columns=['Letterboxd URI', 'Name', 'Year'])
-
-    if path.isfile('watchlist.csv'):
-        watchlist = read_csv('watchlist.csv')
-    else:
-        print("watchlist.csv not found")
-        watchlist = pd.DataFrame(columns=['Letterboxd URI', 'Name', 'Year'])
-    
     # Merge dataframes
+    ratings, watched, watchlist = dataframes
     merged_df = merge_dfs(ratings, watched, watchlist)
 
     # Read config

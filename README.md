@@ -25,7 +25,7 @@ cp config_template.json config.json
     2. `token`: a [Plex Token](https://support.plex.tv/articles/204059436-finding-an-authentication-token-x-plex-token/).
     3. `movie_library`: Name of your movie library. This is usually 'Movies' but may be named something different.
 
-3. Export your [Personal Data](https://letterboxd.com/settings/data/) from Letterboxd, and copy the files `ratings.csv`, `watched.csv` and `watchlist.csv` into this folder.
+3. Export your [Personal Data](https://letterboxd.com/settings/data/) from Letterboxd, and copy the files `ratings.csv`, `watched.csv` and `watchlist.csv` into the `data` folder.
 
 ## Running The App
 

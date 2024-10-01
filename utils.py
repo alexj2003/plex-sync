@@ -2,15 +2,15 @@ import json
 import numpy as np
 import pandas as pd
 from os import path
+from constants import VALID_NAMES
 
 def read_csv(file_path: str) -> pd.DataFrame:
     #Extract file name
     file_name = path.splitext(path.basename(file_path))[0]
 
     # Validate file name
-    valid_names = ['ratings', 'watched', 'watchlist']
-    if file_name not in valid_names:
-        print(f"Invalid CSV file name: {file_name}. Must be one of {valid_names}")
+    if file_name not in VALID_NAMES:
+        print(f"Invalid CSV file name: {file_name}. Must be one of {VALID_NAMES}")
         return None
 
     # Load CSV file
