@@ -56,7 +56,7 @@ def sync_movies(df: pd.DataFrame, config: dict):
         # Update rating
         if rating > 0 and movie.userRating != rating:
             movie.rate(rating)
-            print(f"Rated {movie_title} with {rating} stars")
+            print(f"Rated {movie_title} with {rating}/10.0")
 
         # Update watched status
         if watched and not movie.isWatched:

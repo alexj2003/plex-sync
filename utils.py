@@ -40,6 +40,14 @@ def merge_dfs(ratings: pd.DataFrame, watched: pd.DataFrame, watchlist: pd.DataFr
     merged_df['Watchlist'] = merged_df['Watchlist'].fillna(False)
     merged_df['Rating'] = merged_df['Rating'].fillna(0)
 
+    # Remove duplicate rows
+    merged_df = merged_df.drop_duplicates(subset='Letterboxd URI')
+
+    # Modify ratings (Plex uses 1-10)
+    merged_df['Rating'] = merged_df['Rating'] * 2
+    merged_df['Rating'] = merged_df['Rating'].clip(upper=10, lower=0)
+
+    # Return only needed columns
     merged_df = merged_df[['Name', 'Year', 'Watched', 'Watchlist', 'Rating']]
     return merged_df
 
