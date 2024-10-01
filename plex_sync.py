@@ -1,4 +1,4 @@
-from plexapi.exceptions import BadRequest
+from plexapi.exceptions import BadRequest, NotFound
 from plexapi.playlist import Playlist
 from plexapi.server import PlexServer
 import pandas as pd
@@ -71,28 +71,22 @@ def sync_movies(plex: PlexServer, df: pd.DataFrame, config: dict):
                 # Already on watchlist
                 pass
 
-def get_playlist(plex: PlexServer, playlist_name: str, config: dict) -> Playlist:
-    # Get movie library
-    library_name = config['PLEX']['movie_library']
-    movie_library = plex.library.section(library_name)
-
-    # Try to load existing playlist, otherwise create new one
+def delete_playlist_if_exists(plex: PlexServer, playlist_name: str):
+    # Delete the playlist if it already exists
     try:
         playlist = plex.playlist(playlist_name)
-        print(f"Using existing playlist: {playlist_name}")
-    except BadRequest:
-        playlist = movie_library.createPlaylist(playlist_name)
-        print(f"Creating new playlist: {playlist_name}")
+        playlist.delete()
+        print(f"Playlist found, deleting: {playlist_name}")
+    except NotFound:
+        # Playlist not found, we can create it later
+        pass
 
-    return playlist
-
-def add_to_playlist(plex: PlexServer, playlist: Playlist, movies: pd.DataFrame, config: dict):
+def add_to_playlist(plex: PlexServer, list_name: str, movies: pd.DataFrame, config: dict):
     # Get movie library
     library_name = config['PLEX']['movie_library']
     movie_library = plex.library.section(library_name)
 
     # Add movies to playlist
-    existing_items = playlist.items()
     movies_to_add = []
     for _, row in movies.iterrows():
         name = row['Name']
@@ -105,7 +99,7 @@ def add_to_playlist(plex: PlexServer, playlist: Playlist, movies: pd.DataFrame, 
 
         # Search for movie
         movie = search_movie(movie_library, name, year)
-        if movie is None or movie in existing_items:
+        if movie is None:
             continue
 
         print(f"Adding {movie_title} to playlist")
@@ -115,7 +109,5 @@ def add_to_playlist(plex: PlexServer, playlist: Playlist, movies: pd.DataFrame, 
     if len(movies_to_add) == 0:
         print("No movies to add to playlist")
     else:
-        try:
-            playlist.addItems(movies_to_add)
-        except BadRequest:
-            print(f"Failed to add movies to playlist: {playlist.title}. Ensure that playlist is not a smart playlist.")
+        print(f"Creating playlist: {list_name}")
+        movie_library.createPlaylist(list_name, items=movies_to_add)

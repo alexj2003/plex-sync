@@ -20,16 +20,13 @@ def read_csv(file_path: str) -> pd.DataFrame:
 
 def read_csv_letterboxd_list(file_path: str) -> pd.DataFrame:
     # Load CSV file
-    df = pd.read_csv(file_path)
+    df = pd.read_csv(file_path, skiprows=1)
 
-    # Extract metadata (top 4 rows)
-    list_metadata = df.iloc[:4, :].T
-    list_metadata.columns = list_metadata.iloc[0]
-    list_metadata = list_metadata.drop(list_metadata.index[0])
-    list_name = list_metadata['Name'][0]
+    # Extract list name from metadata
+    list_name = df['Name'][0]
 
-    # Extract movies (from row 5 onwards)
-    list_movies = pd.read_csv(file_path, skiprows=5)
+    # Extract movies
+    list_movies = pd.read_csv(file_path, skiprows=4)
 
     return list_name, list_movies
 

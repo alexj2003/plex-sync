@@ -1,5 +1,5 @@
 import pandas as pd
-from os import path
+from os import getcwd, listdir, path
 from plex_sync import *
 from constants import *
 from utils import *
@@ -36,18 +36,19 @@ def main():
     sync_movies(plex, merged_df, config)
 
     # Read playlists
-    for file in path.listdir(PLAYLIST_PATH):
+    playlist_path = path.join(getcwd(), PLAYLIST_PATH)
+    for file in listdir(playlist_path):
         if file.endswith('.csv'):
             print()
             print(f"Reading playlist: {file}")
             playlist_file = path.join(PLAYLIST_PATH, file)
             list_name, list_movies = read_csv_letterboxd_list(playlist_file)
 
-            # Get Plex playlist
-            plex_playlist = get_playlist(plex, list_name, config)
+            # Delete the playlist if it already exists
+            delete_playlist_if_exists(plex, list_name)
 
             # Add movies to playlist
-            add_to_playlist(plex, plex_playlist, list_movies, config)
+            add_to_playlist(plex, list_name, list_movies, config)
 
 if __name__ == '__main__':
     main()
