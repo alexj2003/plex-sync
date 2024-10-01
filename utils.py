@@ -1,7 +1,8 @@
+import numpy as np
 import pandas as pd
 from os import path
 
-def read_csv(file_path):
+def read_csv(file_path: str) -> pd.DataFrame:
     #Extract file name
     file_name = path.splitext(path.basename(file_path))[0]
 
@@ -14,8 +15,29 @@ def read_csv(file_path):
     # Load CSV file
     df = pd.read_csv(file_path)
 
-    # Exclude 'Letterboxd URI' column
-    if 'Letterboxd URI' in df.columns:
-        df.drop(columns=['Letterboxd URI'], inplace=True)
-    
     return df
+
+def merge_dfs(ratings: pd.DataFrame, watched: pd.DataFrame, watchlist: pd.DataFrame) -> pd.DataFrame:
+    # Prepare dataframes
+    ratings['Watched'] = True
+    ratings['Watchlist'] = np.nan
+
+    watched['Rating'] = np.nan
+    watched['Watched'] = True
+    watched['Watchlist'] = np.nan
+
+    watchlist['Rating'] = np.nan
+    watchlist['Watched'] = np.nan
+    watchlist['Watchlist'] = True
+
+    # Merge dataframes
+    merged_df = pd.merge(ratings, watched, how='outer', on=['Letterboxd URI', 'Name', 'Year'])
+    merged_df = pd.merge(merged_df, watchlist, how='outer', on=['Letterboxd URI', 'Name', 'Year'])
+
+    # Fill NaN values
+    merged_df['Watched'] = merged_df['Watched'].fillna(False)
+    merged_df['Watchlist'] = merged_df['Watchlist'].fillna(False)
+    merged_df['Rating'] = merged_df['Rating'].fillna(0)
+
+    merged_df = merged_df[['Name', 'Year', 'Watched', 'Watchlist', 'Rating']]
+    return merged_df
