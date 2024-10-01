@@ -1,3 +1,4 @@
+from plexapi.exceptions import BadRequest
 from plexapi.server import PlexServer
 import pandas as pd
 
@@ -66,9 +67,9 @@ def sync_movies(df: pd.DataFrame, config: dict):
         # Update watchlist status
         if watchlist:
             try:
-                account.addToWatchList(movie)
+                account.addToWatchlist(movie)
                 print(f"Added {movie_title} to watchlist")
-            except:
+            except BadRequest:
                 # Already on watchlist
                 pass
         
