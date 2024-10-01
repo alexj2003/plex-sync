@@ -26,6 +26,7 @@ cp config_template.json config.json
     3. `movie_library`: Name of your movie library. This is usually 'Movies' but may be named something different.
 
 3. Export your [Personal Data](https://letterboxd.com/settings/data/) from Letterboxd, and copy the files `ratings.csv`, `watched.csv` and `watchlist.csv` into the `data` folder.
+    - If you want to sync playlists, copy the relevent `.csv` files from `lists` into the `data/lists` folder.
 
 ## Running The App
 
