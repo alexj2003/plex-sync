@@ -32,8 +32,8 @@ def merge_dfs(ratings: pd.DataFrame, watched: pd.DataFrame, watchlist: pd.DataFr
     watchlist['Watchlist'] = True
 
     # Merge dataframes
-    merged_df = pd.merge(ratings, watched, how='outer', on=['Letterboxd URI', 'Name', 'Year'])
-    merged_df = pd.merge(merged_df, watchlist, how='outer', on=['Letterboxd URI', 'Name', 'Year'])
+    merged_df = pd.merge(ratings, watched, how='outer', on=['Letterboxd URI', 'Name', 'Year', 'Rating', 'Watched', 'Watchlist'])
+    merged_df = pd.merge(merged_df, watchlist, how='outer', on=['Letterboxd URI', 'Name', 'Year', 'Rating', 'Watched', 'Watchlist'])
 
     # Fill NaN values
     merged_df['Watched'] = merged_df['Watched'].fillna(False)

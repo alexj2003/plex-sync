@@ -12,14 +12,19 @@ def setup_connection(config: dict) -> PlexServer:
 def search_movie(movie_library, name: str, year: int):
     # Search for movie
     print()
-    print(f"Searching for {name} ({year})")
-    search_results = movie_library.search(title=name, year=year)
+    if year is None:
+        movie_title = name
+        search_results = movie_library.search(title=name)
+    else:
+        movie_title = f"{name} ({year})"
+        search_results = movie_library.search(title=name, year=year)
+    print(f"Searching for {movie_title}")
     if len(search_results) == 0:
-        print(f"Movie not found: {name} ({year})")
+        print(f"Movie not found: {movie_title}")
         return None
     else:
         # Return the first result (best match)
-        print(f"Found movie: {name} ({year})")
+        print(f"Found movie: {movie_title}")
         return search_results[0]
 
 
@@ -33,10 +38,15 @@ def sync_movies(df: pd.DataFrame, config: dict):
 
     for _, row in df.iterrows():
         name = row['Name']
-        year = int(row['Year'])
+        year = int(row['Year']) if not pd.isnull(row['Year']) else None
         rating = row['Rating']
         watched = row['Watched']
         watchlist = row['Watchlist']
+
+        if year is None:
+            movie_title = f"{name}"
+        else:
+            movie_title = f"{name} ({year})"
 
         # Search for movie
         movie = search_movie(movie_library, name, year)
@@ -46,18 +56,18 @@ def sync_movies(df: pd.DataFrame, config: dict):
         # Update rating
         if rating > 0 and movie.userRating != rating:
             movie.rate(rating)
-            print(f"Rated {name} ({year}) with {rating} stars")
+            print(f"Rated {movie_title} with {rating} stars")
 
         # Update watched status
         if watched and not movie.isWatched:
             movie.markWatched()
-            print(f"Marked {name} ({year}) as watched")
+            print(f"Marked {movie_title}) as watched")
 
         # Update watchlist status
         if watchlist:
             try:
                 account.addToWatchList(movie)
-                print(f"Added {name} ({year}) to watchlist")
+                print(f"Added {movie_title} to watchlist")
             except:
                 # Already on watchlist
                 pass
