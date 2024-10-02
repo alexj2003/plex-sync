@@ -1,7 +1,7 @@
 from plexapi.exceptions import BadRequest, NotFound
-from plexapi.playlist import Playlist
 from plexapi.server import PlexServer
 import pandas as pd
+import globals
 
 def setup_connection(config: dict) -> PlexServer:
     # Connect to Plex server
@@ -23,10 +23,12 @@ def search_movie(movie_library, name: str, year: int):
     print(f"Searching for {movie_title}")
     if len(search_results) == 0:
         print(f"Movie not found: {movie_title}")
+        globals.total_movies_not_found += 1
         return None
     else:
         # Return the first result (best match)
         print(f"Found movie: {movie_title}")
+        globals.total_movies_found += 1
         return search_results[0]
 
 def sync_movies(plex: PlexServer, df: pd.DataFrame, config: dict):
@@ -111,3 +113,4 @@ def add_to_playlist(plex: PlexServer, list_name: str, movies: pd.DataFrame, conf
     else:
         print(f"Creating playlist: {list_name}")
         movie_library.createPlaylist(list_name, items=movies_to_add)
+        globals.total_playlists_created += 1

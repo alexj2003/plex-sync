@@ -1,14 +1,14 @@
 import pandas as pd
 from os import getcwd, listdir, path
+from globals import VALID_NAMES, PLAYLIST_PATH
 from plex_sync import *
-from constants import *
 from utils import *
 
 def main():
     # Read CSV files
     dataframes = []
     for name in VALID_NAMES:
-        file_path = path.join(DATA_PATH, f"{name}.csv")
+        file_path = path.join(globals.DATA_PATH, f"{name}.csv")
         if path.isfile(file_path):
             print(f"Reading {name}.csv")
             df = read_csv(file_path)
@@ -49,6 +49,9 @@ def main():
 
             # Add movies to playlist
             add_to_playlist(plex, list_name, list_movies, config)
+
+    # Output statistics
+    output_statistics()
 
 if __name__ == '__main__':
     main()

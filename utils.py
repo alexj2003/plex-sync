@@ -2,15 +2,15 @@ import json
 import numpy as np
 import pandas as pd
 from os import path
-from constants import VALID_NAMES
+import globals
 
 def read_csv(file_path: str) -> pd.DataFrame:
     #Extract file name
     file_name = path.splitext(path.basename(file_path))[0]
 
     # Validate file name
-    if file_name not in VALID_NAMES:
-        print(f"Invalid CSV file name: {file_name}. Must be one of {VALID_NAMES}")
+    if file_name not in globals.VALID_NAMES:
+        print(f"Invalid CSV file name: {file_name}. Must be one of {globals.VALID_NAMES}")
         return None
 
     # Load CSV file
@@ -68,3 +68,10 @@ def read_config(file_path: str) -> dict:
         config = json.load(f)
 
     return config
+
+def output_statistics():
+    print()
+    print("Run finished")
+    print(f"Total movies found in library: {globals.total_movies_found}")
+    print(f"Total movies not found: {globals.total_movies_not_found}")
+    print(f"Total playlists created: {globals.total_playlists_created}")
